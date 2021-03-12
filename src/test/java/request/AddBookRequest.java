@@ -1,5 +1,5 @@
 package request;
-
+import java.util.Random;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AddBookRequest {
@@ -21,15 +21,18 @@ public class AddBookRequest {
     }
 
     public void setIsbn(String isbn) {
-        this.isbn = isbn;
+        this.isbn =isbn;
+
+       //this.isbn = isbn + Integer.toString(new Random().nextInt(100));
     }
 
     public String getAisle() {
         return aisle;
     }
 
-    public void setAisle(String aisle) {
+    public void setAisle( String aisle) {
         this.aisle = aisle;
+        //this.aisle = aisle + Integer.toString(new Random().nextInt(100));;
     }
 
     public String getAuthor() {

@@ -1,3 +1,5 @@
+package test;
+
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
@@ -8,15 +10,15 @@ import response.GetBookResponse;
 
 import static io.restassured.RestAssured.given;
 
-public class AddBookTest {
+public class AddBookGetBookTest {
     @Test
     public void addBookPost()
     {
         RestAssured.baseURI = "http://216.10.245.166";
       AddBookRequest addBookRequest = new AddBookRequest();
         addBookRequest.setName("Harry Potter");
-        addBookRequest.setIsbn("987");
-        addBookRequest.setAisle("123");
+        addBookRequest.setIsbn("neetha");
+        addBookRequest.setAisle("abc");
         addBookRequest.setAuthor("J K Rowling");
         Response responseAddBook = given().header("Content-Type","application/json")
                                 .body(addBookRequest)
@@ -24,7 +26,7 @@ public class AddBookTest {
                                 .statusCode(200).extract().response();
         //System.out.println(responseAddBook.asString());
         AddBookResponse addBookResponse = responseAddBook.body().as(AddBookResponse.class);
-       // System.out.println(addBookResponse.getMsg());
+       System.out.println(addBookResponse.getMsg());
         Assert.assertEquals(addBookResponse.getMsg(),"successfully added","Add Book message incorrect");
 
       Response getBookResponse = given().queryParam("ID",addBookResponse.getId())
