@@ -32,9 +32,10 @@ public class AddBookNegativeTest {
                 .body(addBookRequest)
                 .when().post("/Library/Addbook.php").then()
                 .statusCode(404).extract().response();
-        String output =  response.asString().substring(8,69);
+        String output = response.asString().substring(8, 69);
         Assert.assertEquals(output, "Add Book operation failed, looks like the book already exists", "Adding existing Book message incorrect");
 
     }
-
 }
+
+

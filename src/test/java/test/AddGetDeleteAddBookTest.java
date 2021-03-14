@@ -12,61 +12,32 @@ import response.GetBookResponse;
 
 import static io.restassured.RestAssured.given;
 
-public class AddGetDeleteAddBookTest {
+public class AddGetDeleteAddBookTest extends ReusableMethods{
     @Test
     public void addGetDelete()
     {
         RestAssured.baseURI = "http://216.10.245.166";
 
-        AddBookRequest addBookRequest = new AddBookRequest();
-        addBookRequest.setName("Harry Potter");
-        addBookRequest.setIsbn("768");
-        addBookRequest.setAisle("456");
-        addBookRequest.setAuthor("J K Rowling");
-        Response responseAddBook = given().header("Content-Type","application/json")
-                .body(addBookRequest)
-                .when().post("/Library/Addbook.php").then()
-                .statusCode(200).extract().response();
-        AddBookResponse addBookResponse = responseAddBook.body().as(AddBookResponse.class);
+        AddBookResponse addBookResponse = addBook("Harry Potter","062","160","J K Rowling");
         Assert.assertEquals(addBookResponse.getMsg(),"successfully added","Add Book message incorrect");
 
-        Response getBookResponse = given().queryParam("ID",addBookResponse.getId())
-                .header("Content-Type","application/json")
-                .when().get("/Library/GetBook.php").then()
-                .statusCode(200).extract().response();
-
+        Response getBookResponse = getBookByID(addBookResponse.getId(),200);
         GetBookResponse[] book = getBookResponse.as (GetBookResponse [].class);
-        Assert.assertEquals(book[0].getAuthor(),addBookRequest.getAuthor(),"Get Book message incorrect");
-       JSONObject requestParamsDelete = new JSONObject();
-        requestParamsDelete.put("ID",addBookResponse.getId());
+        Assert.assertEquals(book[0].getAuthor(),"J K Rowling","Get Book message incorrect");
 
-        Response deleteResponse = given().header("Content-Type","application/json")
-                .body(requestParamsDelete.toJSONString())
-                .when().post("/Library/DeleteBook.php").then()
-                .statusCode(200).extract().response();
+        Response deleteResponse = deleteBook(addBookResponse.getId());
         String deleteOutput = deleteResponse.asString().substring(8,36);
         Assert.assertEquals(deleteOutput, "book is successfully deleted", "Delete Book message incorrect");
 
-         getBookResponse = given().queryParam("ID",addBookResponse.getId())
-                .header("Content-Type","application/json")
-                .when().get("/Library/GetBook.php").then()
-                .statusCode(404).extract().response();
-
+        getBookResponse = getBookByID(addBookResponse.getId(),404);
          deleteOutput = getBookResponse.prettyPrint().substring(14,73);
-
         Assert.assertEquals(deleteOutput, "The book by requested bookid / author name does not exists!", "Get Book message incorrect");
 
-        addBookRequest.setName("Harry Potter");
-        addBookRequest.setIsbn("768");
-        addBookRequest.setAisle("456");
-        addBookRequest.setAuthor("J K Rowling");
-         responseAddBook = given().header("Content-Type","application/json")
-                .body(addBookRequest)
-                .when().post("/Library/Addbook.php").then()
-                .statusCode(200).extract().response();
-         addBookResponse = responseAddBook.body().as(AddBookResponse.class);
+         addBookResponse = addBook("Harry Potter","062","160","J K Rowling");
         Assert.assertEquals(addBookResponse.getMsg(),"successfully added","Add Book message incorrect");
     }
+
+
 }
 
 
